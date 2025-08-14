@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package qing.albatross.annotation;
+
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -22,11 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface FieldRef {
-  String[] value() default {};
-  Class<?> targetClass() default TargetClass.class;
-  String[] className() default {};
-  boolean required() default false;
-  byte option() default DefOption.DEFAULT;
+@Target({ElementType.FIELD, ElementType.METHOD})
+public @interface Alias {
+  String value();
 }

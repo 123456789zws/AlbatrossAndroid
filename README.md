@@ -1,12 +1,12 @@
 # Albatross Android - Hook And Reflection Framework for Android
- 
+
+[中文版本](README_CN.md)
 ----------------
 
-
 ## Overview
-**Albatross Android** is a high-performance, low-impact hooking and reflection framework designed for Android systems (Android 8.0 - Android 16). It is part of the broader **Albatross** ecosystem (including Albatross Server, Core, Manager, etc.), originally named after a nostalgic VR project from the developer's university days.
+**Albatross Android** is a high-performance, low-impact hooking and reflection framework designed for Android systems (Android 7.0 - Android 16 Baklava Preview). It is part of the broader **Albatross** ecosystem (including Albatross Server, Core, Manager, etc.), originally named after a nostalgic VR project from the developer's university days.
 
-The framework enables method/field hooking through **Hooker classes (mirror classes)** that declaratively describe targets. The system automatically deduces target methods/fields and allows seamless interaction with hooked classes. Unlike traditional reflection-based approaches, it eliminates performance overhead while maintaining safety and compatibility.
+The framework enables method hook/field access through **Hooker classes (mirror classes)** that declaratively describe targets. The system automatically deduces target methods/fields and allows seamless interaction with hooked classes. Unlike traditional reflection-based approaches, it eliminates performance overhead while maintaining safety and compatibility.
 
 ---
 
@@ -36,9 +36,10 @@ Albatross adheres to the following design goals:
 
 ###  Platform Support
 - **Android Versions**:
-    - Full support: API 26-34 (8.0-16)
-    - Instruction hook: API 24-34 (7.0-16)
-    - Limited support: API 24-25 (7.0-7.1) ,field hooking disabled  due to Dex optimization constraints.
+    - Full support: API 26-36 (8.0-16)
+    - Instruction hook: API 24-36 (7.0-16)
+    - Method hook: API 24-36 (7.0-16)
+    - File access: API 26-36 (8.0-16)
     - ❌ Unsupported: API 23 and below (6.0 Marshmallow and earlier)
 - **Architectures**: x86, x86_64, ARM, ARM64
 
@@ -321,4 +322,4 @@ See [LICENSE](LICENSE) for details.
 
 - [Annotations](docs/annotatin_reference.md) — Full list of hooking and configuration annotations
 - [API Reference](#) — Public methods and usage
-- [Exception Handling](#) — Error types and recovery strategies
+- [Exception Handling](docs/exception_documentation.md) — Error types and fix strategies

@@ -22,7 +22,7 @@ public class RedundantFieldErr extends HookerStructErr {
   public Field field;
 
   public RedundantFieldErr(Field f) {
-    super("the hook class must not have useless instance field :" + f);
+    super("hooker must not have useless instance field :" + f);
     this.field = f;
   }
 }

@@ -24,13 +24,13 @@ import java.lang.reflect.Modifier;
 public class InstructionListener {
   Member member;
   InstructionCallback callback;
-  long listenerId;
+  long listenerId = 0;
   int numberVRegs = -1;
   int first_arg_reg = -1;
 
 
   public synchronized void unHook() {
-    if (listenerId > 4096) {
+    if (listenerId != 0) {
       unHookInstructionNative(listenerId);
       listenerId = 0;
     }
@@ -56,6 +56,18 @@ public class InstructionListener {
     return first_arg_reg;
   }
 
+  public int getArgReg(long invocationContext, int i) {
+    int idx = getFirstArgReg(invocationContext) + i;
+    assert idx < numberVRegs;
+    return idx;
+  }
+
+  public int getArgRegTwoWord(long invocationContext, int i) {
+    int idx = getFirstArgReg(invocationContext) + i;
+    assert idx + 1 < numberVRegs;
+    return idx;
+  }
+
   static native long hookInstructionNative(Member member, int minDexPc, int maxDexPc, Object callback);
 
   static native void unHookInstructionNative(long listenerId);
@@ -65,6 +77,8 @@ public class InstructionListener {
   static native float GetVRegFloat(long invocationContext, int i);
 
   static native long GetVRegLong(long invocationContext, int i);
+
+  static native double GetVRegDouble(long invocationContext, int i);
 
   static native Object GetVRegReference(long invocationContext, int i);
 
@@ -81,7 +95,7 @@ public class InstructionListener {
   static native void SetVRegReference(long invocationContext, int i, Object val);
 
 
-  public void onEnter(Object self, int dexPc, long invocationContext) {
+  private void onEnter(Object self, int dexPc, long invocationContext) {
     callback.onEnter(member, self, dexPc, new InvocationContext(invocationContext, this));
   }
 }

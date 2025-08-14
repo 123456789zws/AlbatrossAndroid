@@ -4,6 +4,7 @@ import static qing.albatross.demo.TestMain.testGc;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Debug;
 import android.view.View;
@@ -281,10 +282,12 @@ public class AlbatrossDemoMainActivity extends Activity {
     FieldTest.test(true);
   }
 
-  public void testMain(View view) throws AlbatrossException, NoSuchMethodException {
+  public void testMain(View view) throws AlbatrossException {
     Albatross.hookClass(TestMain.TestMainH.class);
     TestMain testMain = new TestMain(2, 2);
+    //to short,arm may crash
     testMain.testCall(3);
+    assert testMain.z == 5;
   }
 
   InstructionListener listener = null;
@@ -296,17 +299,19 @@ public class AlbatrossDemoMainActivity extends Activity {
         assert dexPc <= 10;
         assert dexPc >= 0;
         assert method == getCaller;
-        assert self == AlbatrossDemoMainActivity.this;
-        assert invocationContext.NumberOfVRegs() == 7;
+        if (self != AlbatrossDemoMainActivity.this) {
+          Albatross.log("self:" + self + " this:" + AlbatrossDemoMainActivity.this);
+        }
+        assert invocationContext.numberOfVRegs() == 7;
         Albatross.log("onEnter:" + dexPc);
-        Object receiver = invocationContext.GetParamReference(0);
+        Object receiver = invocationContext.getParamObject(0);
         assert receiver == self;
-        Object v = invocationContext.GetParamReference(1);
+        Object v = invocationContext.getParamObject(1);
         assert (v instanceof View);
         if (dexPc == 4) {
 //          00003c44: 7100 b700 0000          0000: invoke-static       {}, Lqing/albatross/core/Albatross;->getCallerClass()Ljava/lang/Class; # method@00b7
 //          00003c4a: 0c00                    0003: move-result-object  v0
-          invocationContext.SetVRegReference(0, AlbatrossDemoMainActivity.class);
+          invocationContext.setVRegObject(0, AlbatrossDemoMainActivity.class);
         }
       });
     } else {
@@ -316,8 +321,25 @@ public class AlbatrossDemoMainActivity extends Activity {
   }
 
 
+  InstructionListener onCreate = null;
+
+  public void hookOnCreate(View view) throws NoSuchMethodException {
+    if (onCreate == null) {
+      Method getCaller = Activity.class.getDeclaredMethod("onCreate", Bundle.class);
+      onCreate = Albatross.hookInstruction(getCaller, 0, 100, (method, self, dexPc, invocationContext) -> {
+        assert self.getClass().equals(SecondActivity.class);
+        Albatross.log("hookOnCreate onEnter:" + dexPc + " this:" + self);
+      });
+    } else {
+      onCreate.unHook();
+      onCreate = null;
+    }
+    startActivity(new Intent(this, SecondActivity.class));
+  }
+
+
   public void onResume() {
-    textView.setText(getApplicationInfo().packageName + ":" + System.currentTimeMillis()+",testing by continuously clicking the \"load\" button");
+    textView.setText(getApplicationInfo().packageName + ":" + System.currentTimeMillis() + ",testing by continuously clicking the \"load\" button");
     super.onResume();
   }
 

@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package qing.albatross.annotation;
+package qing.albatross.exception;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public class HookInterfaceErr extends AlbatrossErr {
+  public Class<?> targetClass;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface FieldRef {
-  String[] value() default {};
-  Class<?> targetClass() default TargetClass.class;
-  String[] className() default {};
-  boolean required() default false;
-  byte option() default DefOption.DEFAULT;
+
+  public HookInterfaceErr(Class<?> targetClass) {
+    super("can not hook interface: " + targetClass);
+    this.targetClass = targetClass;
+  }
 }
